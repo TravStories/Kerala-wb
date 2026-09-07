@@ -1,0 +1,6 @@
+{
+  "name": "TravStories - Kerala Tour Packages",
+  "description": "Production-ready, SEO-first dynamic travel website for TravStories.com specializing in Kerala tour packages, hotel bookings, and car rentals.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

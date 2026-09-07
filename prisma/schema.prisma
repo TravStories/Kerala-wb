@@ -1,0 +1,101 @@
+// Prisma schema for TravStories.com
+// Supports PostgreSQL (Supabase, Neon, AWS RDS, etc.)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  role         String   @default("ADMIN")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Package {
+  id                        String   @id @default(cuid())
+  name                      String
+  slug                      String   @unique
+  price                     Int
+  originalPrice             Int?
+  duration                  String   // e.g. "6 Nights / 7 Days"
+  image                     String
+  destinations              String   // e.g. "Kochi – Munnar – Thekkady – Alleppey"
+  shortDescription          String
+  basicItinerary            String   // JSON or text preview
+  completeItinerary         String   // Detailed day-by-day JSON
+  highlights                String   // Key highlights JSON or newline separated
+  inclusions                String   // What is included
+  exclusions                String   // What is not included
+  hotelInformation          String   // Hotels and category
+  transportationInformation String   // Private AC car, fuel, driver
+  featured                  Boolean  @default(false)
+  published                 Boolean  @default(true)
+  tag                       String?  // e.g. "Best Seller", "Trending", "Romantic"
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+
+  leads                     Lead[]
+}
+
+model Lead {
+  id           String   @id @default(cuid())
+  name         String
+  mobile       String
+  packageId    String?
+  package      Package? @relation(fields: [packageId], references: [id], onDelete: SetNull)
+  inquiryType  String   @default("PACKAGE_DETAIL") // "PACKAGE_DETAIL" | "CUSTOM_TRIP" | "SERVICE_INQUIRY" | "EXIT_POPUP"
+  travelDate   String?
+  travellers   String?
+  notes        String?
+  status       String   @default("New") // "New" | "Contacted" | "Interested" | "Converted" | "Lost"
+  source       String   @default("Website")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Branding {
+  id                String   @id @default(cuid())
+  companyName       String   @default("TravStories")
+  logoUrl           String?
+  faviconUrl        String?
+  primaryColor      String   @default("#047857") // Deep Tropical Green
+  secondaryColor    String   @default("#0284c7") // Backwater Blue
+  accentColor       String   @default("#f97316") // Warm Sunset Orange
+  tagline           String   @default("Handcrafted Kerala Journeys")
+  footerDescription String   @default("Kerala's premier experiential travel company. We curate handcrafted holidays featuring misty hills, tranquil backwaters, authentic houseboats, and serene beaches.")
+  instagramUrl      String?  @default("https://instagram.com/travstories")
+  facebookUrl       String?  @default("https://facebook.com/travstories")
+  youtubeUrl        String?  @default("https://youtube.com/@travstories")
+  updatedAt         DateTime @updatedAt
+}
+
+model Settings {
+  id                String   @id @default(cuid())
+  notificationEmail String   @default("sales.travstories@gmail.com")
+  phoneNumber       String   @default("+91 98765 43210")
+  whatsappNumber    String   @default("+919876543210")
+  contactEmail      String   @default("sales.travstories@gmail.com")
+  officeAddress     String?  @default("Marine Drive, Kochi, Kerala 682031, India")
+  updatedAt         DateTime @updatedAt
+}
+
+model Testimonial {
+  id            String   @id @default(cuid())
+  customerName  String
+  travellerType String   // "Honeymoon Couple", "Family with Kids", "Friend Group"
+  destination   String   // "Munnar & Alleppey", "Wayanad Escape"
+  review        String
+  rating        Int      @default(5)
+  date          String
+  avatarUrl     String?
+  createdAt     DateTime @default(now())
+}
